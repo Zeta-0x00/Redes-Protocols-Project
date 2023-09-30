@@ -25,9 +25,9 @@ class UtopiaReceiver():
 		print(f'Utopia Reciever', end='', flush=True)
 		while True:
 			wait_for_event(event='frame_arrival')
-			pkt, addr = self.sock.recvfrom(1024)
-			DATA = pickle.loads(pkt)
-			packet: Packet = Packet(data=DATA.data)
+			received_packet, addr = self.sock.recvfrom(1024)
+			Datos = pickle.loads(received_packet)
+			packet: Packet = Packet(data=Datos.data)
 			frame: Frame = Frame(packet=packet)
 			from_physical_layer(r=frame)
 			to_network_layer(p=packet)
@@ -56,11 +56,11 @@ class UtopiaSender():
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data) -> None:
 		seqNo = 0
 		send_timer = Timer(duration=TIMEOUT_INTERVAL)
-		file: BufferedWriter = open("b.txt", "ab")
+		file: BufferedWriter = open("b.zlib", "ab")
 		file.seek(0)
 		file.truncate(0)
 		print(f'Utopia Sender', end='', flush=True)
-		while no_of_frames > 0:
+		while no_of_frames >= 0:
 			canSend = False
 			tkinter_status = [seqNo, data]
 			while not canSend:
