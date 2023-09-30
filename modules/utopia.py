@@ -2,10 +2,8 @@ from io import BufferedWriter
 import pickle
 import socket
 import time
-from events import *
 from frame import Packet, Frame
 from typing import Literal
-from timer import Timer
 from threading import Thread
 import signal
 import sys
@@ -24,13 +22,10 @@ class UtopiaReceiver():
 	def recreive(self) -> None:
 		print(f'Utopia Reciever', end='', flush=True)
 		while True:
-			wait_for_event(event='frame_arrival')
 			received_packet, addr = self.sock.recvfrom(1024)
 			Datos = pickle.loads(received_packet)
 			packet: Packet = Packet(data=Datos.data)
 			frame: Frame = Frame(packet=packet)
-			from_physical_layer(r=frame)
-			to_network_layer(p=packet)
 			print('Frame Received with sequence_number: ', frame.sequence_number)
 			print('Content : ', frame.data)
 			print('------------------------------------------------------------------')
@@ -55,7 +50,6 @@ class UtopiaSender():
 		...
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data) -> None:
 		sequence_number = 0
-		send_timer = Timer(duration=TIMEOUT_INTERVAL)
 		file: BufferedWriter = open("b.zlib", "ab")
 		file.seek(0)
 		file.truncate(0)
@@ -66,10 +60,8 @@ class UtopiaSender():
 			while not canSend:
 				packet = Packet(data)
 				frame = Frame(packet)
-				from_network_layer(packet)
 				self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)
 				canSend = True
-				to_physical_layer(frame)
 			pickle.dump(tkinter_status, file)
 			no_of_frames -= 1
 			sequence_number += 1

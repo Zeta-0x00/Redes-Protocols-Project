@@ -3,7 +3,6 @@ import socket
 import pickle
 import random
 import time
-from events import *
 from typing import Literal, NoReturn
 import threading
 import signal
@@ -25,7 +24,7 @@ class GoBackNReceiver():
 	def receiver(self)  -> NoReturn:
 		print(f'GoBackN Receiver', end = '', flush = True)
 		while True:
-			enable_network_layer()
+			
 			packet_address,addr = self.sock.recvfrom(1024)
 			packet_address = pickle.loads(packet_address)
 			packet: list = []
@@ -36,35 +35,35 @@ class GoBackNReceiver():
 			f = int(packet_address[4])
 			f1 = int(packet_address[5])
 			if f != 5 :
-				from_physical_layer(packet)
+				
 				for i in range(frame_send_at_instance):
 					if rw == int(arr1[i]) :
-						to_network_layer(packet)
+						
 						print("Frame ",arr1[i]," is received correctly.")
 						print("--------------------------------------------------------------------------------")
 						rw = (rw+1)%m
 					else:
-						to_network_layer(packet)
+						
 						print("Duplicate Frame ",arr1[i]," is discarded")
 				a1: int = random.randint(0,14)
 				packet.extend([rw,a1])
 				self.sock.sendto(pickle.dumps(packet),addr)
 			else :
-				from_physical_layer(packet)
+				
 				for i in range(f1) :
 					if rw == int(arr1[i]):
-						to_network_layer(packet)
+						
 						print("Frame ",arr1[i]," is received correctly.")
 						rw: int = (rw + 1)%m
 						print("--------------------------------------------------------------------------------")
 					else :
-						to_network_layer(packet)
+						
 						print("Duplicate Frame ",arr1[i]," is discarded.")
 						print("--------------------------------------------------------------------------------")
 				packet.extend([rw,f1])
 				self.sock.sendto(pickle.dumps(packet),addr)
 	def stop_receiver(self)  -> None:
-		disable_network_layer()
+		
 		self.sock.close()
 
 class GoBackNSender():
@@ -89,12 +88,11 @@ class GoBackNSender():
 		file: BufferedWriter = open("l.zlib","ab")
 		file.seek(0)
 		file.truncate(0)
-		enable_network_layer()
+		
 		ch = 'y'
 		print(f'GoBackN Sender', end = '', flush = True)
 		self.senderLoop(array_to_store, ch, file, frame_send_at_instance, receive_window, send_window, size_of_the_array,
 				total_frames, total_number_of_frames)
-		disable_network_layer();
 		file.close()
 		time.sleep(2)
 	def senderLoop(self, array_to_store, ch, file, frame_send_at_instance, receive_window, send_window, size_of_the_array,
@@ -104,16 +102,13 @@ class GoBackNSender():
 			array_to_store_the_frames_to_be_sent: list = []
 			packet: list = []
 			j: int = 0
-			to_physical_layer(packet) 
 			if total_frames - size_of_the_array < 4:
-				from_network_layer(packet)
 				frame_send_at_instance = total_frames - size_of_the_array
 			for i in range(send_window, (send_window + frame_send_at_instance)):
-				to_network_layer(packet)
 				array_to_store_the_frames_to_be_sent.append(array_to_store[i])
 				j += 1
 			for i in range(j):
-				from_network_layer(packet)
+				
 				print("Frame  ", array_to_store_the_frames_to_be_sent[i], " is sent")
 			print("--------------------------------------------------------------------------------")
 			random_initial: int = random.randint(a=0, b=9)
@@ -123,8 +118,6 @@ class GoBackNSender():
 				random_initial, random_frame_instance])
 			self.sock.sendto(pickle.dumps(packet), ('localhost', 8025))
 			if random_initial != 5:
-				from_network_layer(p=packet)
-				from_physical_layer(r=packet)
 				ack, _ = self.sock.recvfrom(1024)
 				ack = pickle.loads(ack)
 				receive_window = int(ack[0])
@@ -150,13 +143,11 @@ class GoBackNSender():
 						send_window = (send_window + frame_send_at_instance) % total_number_of_frames
 						size_of_the_array += 4
 				else:
-					to_network_layer(packet)
 					send_window = (send_window + frame_send_at_instance) % total_number_of_frames
 					print("All Four Frames are Acknowledged")
 					print("--------------------------------------------------------------------------------")
 					size_of_the_array += 4
-			else:
-				to_network_layer(packet)
+			else:				
 				ack, _ = self.sock.recvfrom(1024)
 				ack = pickle.loads(ack)
 				receive_window = int(ack[0])
@@ -174,8 +165,7 @@ class GoBackNSender():
 				send_window = array_to_store_the_frames_to_be_sent[random_frame_instance]
 			pickle.dump(packet, file)
 			ch: str = input('Send Again(y/n) : ')
-			if ch != 'y':
-				enable_network_layer()
+			if ch != 'y':				
 				break
 	def disable_network_layer(self) -> None:
 		print("Sender is disabled")

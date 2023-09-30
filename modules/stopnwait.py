@@ -3,7 +3,6 @@ import pickle
 import socket
 import random
 import time
-from events import *
 from frame import Packet, Frame
 from typing import Literal
 from timer import Timer
@@ -25,10 +24,9 @@ class StopNWaitReceiver():
 			packet_connect_address, addr = self.sock.recvfrom(1024)
 			data_loads = pickle.loads(packet_connect_address)
 			packet: Packet = Packet(data_loads)
-			from_network_layer(packet)
 			frame: Frame = Frame(packet)
 			rand: int = packet.sequence_number
-			to_physical_layer(frame)
+
 			match rand:
 				case 4:
 					print('Frame Received with sequence_number: ', frame.sequence_number)
@@ -72,9 +70,6 @@ class StopNWaitSender():
 				packet_ack = Packet(data=data)
 				rand_number: int = random.randint(a=1, b=4)
 				frame: Frame = Frame(packet=packet_ack)
-				from_physical_layer(r=packet_ack)
-				to_network_layer(p=packet_ack)
-				to_physical_layer(s=packet_ack)
 				self.sock.sendto(pickle.dumps(packet_ack), ('localhost', 8025))
 				send_timer.start()
 				match rand_number:

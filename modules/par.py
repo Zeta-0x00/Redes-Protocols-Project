@@ -1,8 +1,6 @@
 import socket
 import pickle
-from events import *
 from frame import Frame, Packet
-from timer import Timer
 from typing import Literal
 from threading import Thread
 import signal
@@ -27,7 +25,6 @@ class ParReceiver():
 			if frame.data == "":
 				break
 			if frame.sequence_number == expected_seq_no:
-				from_physical_layer(frame.data)
 				print(f"Received: {frame.data}")
 				ack = Frame(Packet(""))
 				ack.type = "ack"
@@ -55,13 +52,11 @@ class ParSender():
 			frame.sequence_number = sequence_number
 			self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)
 			print(f"Sent frame with sequence_number={sequence_number}")
-			start_timer(frame.sequence_number)
 			while True:
 				ack_packet, addr = self.sock.recvfrom(1025)
 				ack = pickle.loads(ack_packet)
 				if isinstance(ack, Frame) and ack.confirmation_number == sequence_number:
 					print(f"Received ACK with sequence_number={ack.confirmation_number}")
-					stop_timer(sequence_number)
 					break
 			
 			sequence_number: int = (sequence_number + 1) % 2

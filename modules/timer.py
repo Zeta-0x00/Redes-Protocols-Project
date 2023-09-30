@@ -1,29 +1,23 @@
 import time
-# Timer class to implement the timer
 class Timer(object):
     TIMER_STOP = -1
-    # Stores the duration of the timer
-    def __init__(self, duration):
-        self._start_time = self.TIMER_STOP
-        self._duration = duration
+    def __init__(self, duration)-> None:
+        self.inicio = self.TIMER_STOP
+        self.duracion = duration
 
-    # Starts the timer
-    def start(self):
-        if self._start_time == self.TIMER_STOP:
-            self._start_time = time.time()
+    def start(self)-> None:
+        if self.inicio == self.TIMER_STOP:
+            self.inicio = time.time()
 
-    # Stops the timer
-    def stop(self):
-        if self._start_time != self.TIMER_STOP:
-            self._start_time = self.TIMER_STOP
+    def stop(self)-> None:
+        if self.inicio != self.TIMER_STOP:
+            self.inicio = self.TIMER_STOP
 
-    # Determines whether the timer is runnning
-    def running(self):
-        return self._start_time != self.TIMER_STOP
+    def running(self)-> bool:
+        return self.inicio != self.TIMER_STOP
 
-    # Determines whether the timer timed out
-    def timeout(self):
+    def timeout(self)-> bool:
         if not self.running():
             return False
         else:
-            return time.time() - self._start_time >= self._duration
+            return time.time() - self.inicio >= self.duracion
