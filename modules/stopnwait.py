@@ -31,13 +31,13 @@ class StopNWaitReceiver():
 			to_physical_layer(frame)
 			match rand:
 				case 4:
-					print('Frame Received with seqNo: ', frame.sequence_number)
+					print('Frame Received with sequence_number: ', frame.sequence_number)
 					packet_connect_address = (int(frame.sequence_number) + 1) % 2
 					print('Acknowlegment ', packet_connect_address, ' sent')
 					self.sock.sendto(bytes(str(object=packet_connect_address), encoding='utf-8'), ('localhost', 8000))
 					print('------------------------------------------------------------------')
 				case 3:
-					print('Frame Received with seqNo: ', frame.sequence_number)
+					print('Frame Received with sequence_number: ', frame.sequence_number)
 					packet_connect_address = 'Acknowledgement Lost'
 					self.sock.sendto(bytes(str(object=packet_connect_address), encoding='utf-8'), ('localhost', 8000))
 					print('------------------------------------------------------------------')
@@ -59,7 +59,7 @@ class StopNWaitSender():
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data):
 		send_timer = Timer(duration=TIMEOUT_INTERVAL)
 		frame_to_send: int = 0
-		seqNo = 0
+		sequence_number = 0
 		file: BufferedWriter = open("b.zlib", "ab")
 		file.seek(0)
 		file.truncate(0)
@@ -67,20 +67,20 @@ class StopNWaitSender():
 		while no_of_frames > 0:
 			canSend = False
 			tkinter_status: list = []
-			tkinter_status.extend([seqNo, data])
+			tkinter_status.extend([sequence_number, data])
 			while not canSend:
 				packet_ack = Packet(data=data)
-				rand_no: int = random.randint(a=1, b=4)
+				rand_number: int = random.randint(a=1, b=4)
 				frame: Frame = Frame(packet=packet_ack)
 				from_physical_layer(r=packet_ack)
 				to_network_layer(p=packet_ack)
 				to_physical_layer(s=packet_ack)
 				self.sock.sendto(pickle.dumps(packet_ack), ('localhost', 8025))
 				send_timer.start()
-				match rand_no:
+				match rand_number:
 					case 1:
 						print('Info : ', data)
-						print('Seq NO : ', seqNo)
+						print('Seq NO : ', sequence_number)
 						print('Frame Lost')
 						print('Resending the frame')
 						tkinter_status.append('Frame Lost')
@@ -88,7 +88,7 @@ class StopNWaitSender():
 						print('------------------------------------------------------------------')
 					case 2:
 						print('Info : ', data)
-						print('Seq NO : ', seqNo)
+						print('Seq NO : ', sequence_number)
 						print('TimeOut')
 						print('Resending the Frame')
 						tkinter_status.append('Timeout')
@@ -96,7 +96,7 @@ class StopNWaitSender():
 						print('------------------------------------------------------------------')
 					case 3:
 						print('Info : ', data)
-						print('Seq NO : ', seqNo)
+						print('Seq NO : ', sequence_number)
 						acknowledgement, _ = self.sock.recvfrom(1024)
 						acknowledgement = str(acknowledgement, 'utf-8')
 						print(acknowledgement)
@@ -107,11 +107,11 @@ class StopNWaitSender():
 						acknowledgement, _ = self.sock.recvfrom(1024)
 						acknowledgement = str(acknowledgement, 'utf-8')
 						print('Info : ', data)
-						print('Seq NO : ', seqNo)
+						print('Seq NO : ', sequence_number)
 						print('Acknowledgement No : ', acknowledgement, ' received')
 						send_timer.stop()
 						canSend = True
-						seqNo = (seqNo + 1) % 2
+						sequence_number = (sequence_number + 1) % 2
 						tkinter_status.append('Acknowledgement Received')
 						print('------------------------------------------------------------------')
 					case _:

@@ -31,7 +31,7 @@ class UtopiaReceiver():
 			frame: Frame = Frame(packet=packet)
 			from_physical_layer(r=frame)
 			to_network_layer(p=packet)
-			print('Frame Received with seqNo: ', frame.sequence_number)
+			print('Frame Received with sequence_number: ', frame.sequence_number)
 			print('Content : ', frame.data)
 			print('------------------------------------------------------------------')
 	
@@ -54,7 +54,7 @@ class UtopiaSender():
 	def __init__(self) -> None:
 		...
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data) -> None:
-		seqNo = 0
+		sequence_number = 0
 		send_timer = Timer(duration=TIMEOUT_INTERVAL)
 		file: BufferedWriter = open("b.zlib", "ab")
 		file.seek(0)
@@ -62,7 +62,7 @@ class UtopiaSender():
 		print(f'Utopia Sender', end='', flush=True)
 		while no_of_frames >= 0:
 			canSend = False
-			tkinter_status = [seqNo, data]
+			tkinter_status = [sequence_number, data]
 			while not canSend:
 				packet = Packet(data)
 				frame = Frame(packet)
@@ -72,7 +72,7 @@ class UtopiaSender():
 				to_physical_layer(frame)
 			pickle.dump(tkinter_status, file)
 			no_of_frames -= 1
-			seqNo += 1
+			sequence_number += 1
 		file.close()
 		time.sleep(10)
 	

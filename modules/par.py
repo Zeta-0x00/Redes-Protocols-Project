@@ -1,8 +1,8 @@
 import socket
 import pickle
-from events.events import *
-from frame.frame import Frame, Packet
-from timer.timer import Timer
+from events import *
+from frame import Frame, Packet
+from timer import Timer
 from typing import Literal
 from threading import Thread
 import signal
@@ -36,7 +36,7 @@ class ParReceiver():
 				self.sock.sendto(pickle.dumps(ack), ('localhost', 8001))
 				expected_seq_no = (expected_seq_no + 1) % 2
 			else:
-				print(f"Discarding out-of-order frame with seqNo: {frame.sequence_number}")
+				print(f"Discarding out-of-order frame with sequence_number: {frame.sequence_number}")
 	def stop_receiver(self) -> None:
 		self.sock.close()
 
@@ -49,25 +49,25 @@ class ParSender():
 		...
 	def send_data(self,num_frames,data)-> None:
 		packet: Packet = Packet(data)
-		seq_no: int = 0
+		sequence_number: int = 0
 		for i in range(num_frames):
 			frame: Frame = Frame(packet=packet)
-			frame.sequence_number = seq_no
+			frame.sequence_number = sequence_number
 			self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)
-			print(f"Sent frame with seqNo={seq_no}")
+			print(f"Sent frame with sequence_number={sequence_number}")
 			start_timer(frame.sequence_number)
 			while True:
 				ack_packet, addr = self.sock.recvfrom(1025)
 				ack = pickle.loads(ack_packet)
-				if isinstance(ack, Frame) and ack.confirmation_number == seq_no:
-					print(f"Received ACK with seqNo={ack.confirmation_number}")
-					stop_timer(seq_no)
+				if isinstance(ack, Frame) and ack.confirmation_number == sequence_number:
+					print(f"Received ACK with sequence_number={ack.confirmation_number}")
+					stop_timer(sequence_number)
 					break
 			
-			seq_no: int = (seq_no + 1) % 2
-			packet.sequence_number = seq_no
+			sequence_number: int = (sequence_number + 1) % 2
+			packet.sequence_number = sequence_number
 		end_frame = Frame(packet=Packet(data=""))
-		end_frame.sequence_number = seq_no
+		end_frame.sequence_number = sequence_number
 		self.sock.sendto(pickle.dumps(end_frame), self.RECEIVER_ADDR)
 	def stop_sender(self)-> None:
 		self.sock.close()

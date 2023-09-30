@@ -3,7 +3,7 @@ import socket
 import pickle
 import random
 import time
-from events.events import *
+from events import *
 from typing import Literal, NoReturn
 import threading
 import signal
@@ -73,7 +73,7 @@ class GoBackNSender():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
 	def sender(self) -> None:
-		tot_frames = 16
+		total_frames = 16
 		window_size = 3
 		total_number_of_frames: int = pow(2, window_size)
 		frame_number = 0
@@ -83,7 +83,7 @@ class GoBackNSender():
 		array_to_store_the_frames_to_be_sent: list = []
 		array_to_store: list = []
 		size_of_the_array: int = 0
-		for i in range(tot_frames):
+		for i in range(total_frames):
 			array_to_store.append(frame_number)
 			frame_number = (frame_number + 1) % total_number_of_frames
 		file: BufferedWriter = open("l.zlib","ab")
@@ -93,21 +93,21 @@ class GoBackNSender():
 		ch = 'y'
 		print(f'GoBackN Sender', end = '', flush = True)
 		self.senderLoop(array_to_store, ch, file, frame_send_at_instance, receive_window, send_window, size_of_the_array,
-				tot_frames, total_number_of_frames)
+				total_frames, total_number_of_frames)
 		disable_network_layer();
 		file.close()
 		time.sleep(2)
 	def senderLoop(self, array_to_store, ch, file, frame_send_at_instance, receive_window, send_window, size_of_the_array,
-				tot_frames, total_number_of_frames):
+				total_frames, total_number_of_frames):
 		# This while loop is used to send the frames to the receiver with size of the array.
-		while ch == 'y' and size_of_the_array < tot_frames:
+		while ch == 'y' and size_of_the_array < total_frames:
 			array_to_store_the_frames_to_be_sent: list = []
 			packet: list = []
 			j: int = 0
 			to_physical_layer(packet) 
-			if tot_frames - size_of_the_array < 4:
+			if total_frames - size_of_the_array < 4:
 				from_network_layer(packet)
-				frame_send_at_instance = tot_frames - size_of_the_array
+				frame_send_at_instance = total_frames - size_of_the_array
 			for i in range(send_window, (send_window + frame_send_at_instance)):
 				to_network_layer(packet)
 				array_to_store_the_frames_to_be_sent.append(array_to_store[i])

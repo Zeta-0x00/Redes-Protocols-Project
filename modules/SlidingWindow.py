@@ -14,8 +14,8 @@ def halnder(signum, frame):
 signal.signal(signal.SIGINT, halnder)
 
 class Packet:
-    def __init__(self, seq_num, data):
-        self.seq_num: Any = seq_num
+    def __init__(self, sequence_number, data):
+        self.sequence_number: Any = sequence_number
         self.data: Any = data
 
 class Frame:
@@ -25,15 +25,15 @@ class Frame:
         self.expected_seq_num = 0
         self.recv_base = 0
     def receive_packet(self, packet) -> Packet:
-        if packet.seq_num >= self.expected_seq_num and packet.seq_num < self.expected_seq_num + self.window_size:
-            if self.window[packet.seq_num % self.window_size] is None:
-                self.window[packet.seq_num % self.window_size] = packet
-            if packet.seq_num == self.expected_seq_num:
+        if packet.sequence_number >= self.expected_seq_num and packet.sequence_number < self.expected_seq_num + self.window_size:
+            if self.window[packet.sequence_number % self.window_size] is None:
+                self.window[packet.sequence_number % self.window_size] = packet
+            if packet.sequence_number == self.expected_seq_num:
                 self._deliver_packets()
-        return self._ack_packet(seq_num=packet.seq_num)
-    def _ack_packet(self, seq_num) -> Packet:
-        ack_num: Any = seq_num + 1
-        return Packet(seq_num=ack_num, data=b'')
+        return self._ack_packet(sequence_number=packet.sequence_number)
+    def _ack_packet(self, sequence_number) -> Packet:
+        ack_num: Any = sequence_number + 1
+        return Packet(sequence_number=ack_num, data=b'')
     def _deliver_packets(self) -> None:
         while self.window[self.recv_base % self.window_size] is not None:
             packet: Any = self.window[self.recv_base % self.window_size]
@@ -74,7 +74,7 @@ class SWSender():
                 try:
                     ack_data, _ = sock.recvfrom(1024)
                     ack_packet = pickle.loads(ack_data)
-                    if ack_packet.seq_num == packet.seq_num + 1:
+                    if ack_packet.sequence_number == packet.sequence_number + 1:
                         break
                 except socket.timeout:
                     pass
@@ -90,21 +90,21 @@ if __name__ == '__main__':
     receiver_ip = '127.0.0.1'
     receiver_port = 6000
     packets: list[Packet] = [
-        Packet(seq_num=0, data=b'Kenobi:'),
-        Packet(seq_num=1, data=b'\tHello There!'),
-        Packet(seq_num=2, data=b'Grevius:'),
-        Packet(seq_num=3, data=b'\tGeneral Kenobi!'),
-        Packet(seq_num=4, data=b'\tYou are a bold one!'),
-        Packet(seq_num=5, data=b'\tKill him!'),
-        Packet(seq_num=6, data=b'*General Kenobi destroyed droids *'),
-        Packet(seq_num=7, data=b'Grevious:'),
-        Packet(seq_num=8, data=b'\tBack away! I will deal with this Jedi slime myself!'),
-        Packet(seq_num=9, data=b'Kenobi:'),
-        Packet(seq_num=10, data=b'\tYour move!'),
-        Packet(seq_num=11, data=b'Grevious:'),
-        Packet(seq_num=12, data=b'\tYou fool! I have been trained in your Jedi arts by Count Dooku!'),
-        Packet(seq_num=13, data=b'\tAttack, Kenobi!'),
-        Packet(seq_num=14, data=b'*Start of the battle*'),
+        Packet(sequence_number=0, data=b'Kenobi:'),
+        Packet(sequence_number=1, data=b'\tHello There!'),
+        Packet(sequence_number=2, data=b'Grevius:'),
+        Packet(sequence_number=3, data=b'\tGeneral Kenobi!'),
+        Packet(sequence_number=4, data=b'\tYou are a bold one!'),
+        Packet(sequence_number=5, data=b'\tKill him!'),
+        Packet(sequence_number=6, data=b'*General Kenobi destroyed droids *'),
+        Packet(sequence_number=7, data=b'Grevious:'),
+        Packet(sequence_number=8, data=b'\tBack away! I will deal with this Jedi slime myself!'),
+        Packet(sequence_number=9, data=b'Kenobi:'),
+        Packet(sequence_number=10, data=b'\tYour move!'),
+        Packet(sequence_number=11, data=b'Grevious:'),
+        Packet(sequence_number=12, data=b'\tYou fool! I have been trained in your Jedi arts by Count Dooku!'),
+        Packet(sequence_number=13, data=b'\tAttack, Kenobi!'),
+        Packet(sequence_number=14, data=b'*Start of the battle*'),
     ]
     receiver_thread = threading.Thread(target=SWReceiver.receive_packets, args=(receiver_ip, receiver_port))
     receiver_thread.start()
