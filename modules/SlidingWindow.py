@@ -102,7 +102,7 @@ if __name__ == '__main__':
         Packet(seq_num=9, data=b'Kenobi:'),
         Packet(seq_num=10, data=b'\tYour move!'),
         Packet(seq_num=11, data=b'Grevious:'),
-        Packet(seq_num=12, data=b'\tYou fool! I have been trained in your Jedi arts by Count Dooku himself!'),
+        Packet(seq_num=12, data=b'\tYou fool! I have been trained in your Jedi arts by Count Dooku!'),
         Packet(seq_num=13, data=b'\tAttack, Kenobi!'),
         Packet(seq_num=14, data=b'*Start of the battle*'),
     ]
