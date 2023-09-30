@@ -8,10 +8,11 @@ from typing import Literal
 from timer.timer import Timer
 from threading import Thread
 import signal
+import sys
 
 def handler(signum, frame)-> None:
 	print('good bye')
-	exit(0)
+	sys.exit(0)
 signal.signal(signal.SIGINT, handler)
 
 class UtopiaReceiver():
@@ -19,7 +20,7 @@ class UtopiaReceiver():
 	sock: socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(RECEIVER_ADDR)
 	def __init__(self) -> None:
-		...
+		self.running = True
 	def recreive(self) -> None:
 		print(f'Utopia Reciever', end='', flush=True)
 		while True:
@@ -38,6 +39,7 @@ class UtopiaReceiver():
 		print('Receiver Stopped')
 		try:
 			self.sock.close()
+			self.running = False
 		except OSError as e:
 			pass
 
@@ -98,4 +100,7 @@ if __name__ == '__main__':
 	except Exception:
 		...
 	receiver_thread.join()
+	time.sleep(5)
+	sender_thread._stop()
+	receiver_thread._stop()
 	
