@@ -2,10 +2,10 @@ from io import BufferedWriter
 import pickle
 import socket
 import time
-from events.events import *
-from frame.frame import Packet, Frame
+from events import *
+from frame import Packet, Frame
 from typing import Literal
-from timer.timer import Timer
+from timer import Timer
 from threading import Thread
 import signal
 import sys
