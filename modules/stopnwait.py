@@ -77,7 +77,7 @@ class StopNWaitSender():
 	SENDER_ADDR: tuple[Literal['localhost'], Literal[8000]] = ('localhost', 8000)
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
-	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data):
+	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, number_of_frames, data):
 		send_timer = Timer(duration=TIMEOUT_INTERVAL)
 		frame_to_send: int = 0
 		sequence_number = 0
@@ -85,10 +85,10 @@ class StopNWaitSender():
 		file.seek(0)
 		file.truncate(0)
 		print(f'StopNWait Sender', end='', flush=True)
-		while no_of_frames > 0:
+		while number_of_frames > 0:
 			canSend = False
-			tkinter_status: list = []
-			tkinter_status.extend([sequence_number, data])
+			lista: list = []
+			lista.extend([sequence_number, data])
 			while not canSend:
 				packet_ack = Packet(data=data)
 				rand_number: int = random.randint(a=1, b=4)
@@ -101,7 +101,7 @@ class StopNWaitSender():
 						print('Seq NO : ', sequence_number)
 						print('Frame Lost')
 						print('Resending the frame')
-						tkinter_status.append('Frame Lost')
+						lista.append('Frame Lost')
 						send_timer.stop()
 						print('------------------------------------------------------------------')
 					case 2:
@@ -109,7 +109,7 @@ class StopNWaitSender():
 						print('Seq NO : ', sequence_number)
 						print('TimeOut')
 						print('Resending the Frame')
-						tkinter_status.append('Timeout')
+						lista.append('Timeout')
 						send_timer.stop()
 						print('------------------------------------------------------------------')
 					case 3:
@@ -119,7 +119,7 @@ class StopNWaitSender():
 						acknowledgement = str(acknowledgement, 'utf-8')
 						print(acknowledgement)
 						send_timer.stop()
-						tkinter_status.append('Acknowledgement Lost')
+						lista.append('Acknowledgement Lost')
 						print('------------------------------------------------------------------')
 					case 4:
 						acknowledgement, _ = self.sock.recvfrom(1024)
@@ -130,12 +130,12 @@ class StopNWaitSender():
 						send_timer.stop()
 						canSend = True
 						sequence_number = (sequence_number + 1) % 2
-						tkinter_status.append('Acknowledgement Received')
+						lista.append('Acknowledgement Received')
 						print('------------------------------------------------------------------')
 					case _:
 						...
-			pickle.dump(tkinter_status, file)
-			no_of_frames -= 1
+			pickle.dump(lista, file)
+			number_of_frames -= 1
 		file.close()
 		time.sleep(10)
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
 	sender: StopNWaitSender = StopNWaitSender()
 	receiver_thread: Thread = Thread(target=receiver.receive)
 	receiver_thread.start()
-	sender_thread: Thread = Thread(target=sender.send, args=(5, 2, 10, "Hello"))
+	sender_thread: Thread = Thread(target=sender.send, args=(5, 2, 40, "Hello"))
 	sender_thread.start()
 	sender_thread.join()
 	try:
