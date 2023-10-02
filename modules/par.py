@@ -34,8 +34,10 @@ class ParReceiver():
 				expected_seq_no = (expected_seq_no + 1) % 2
 			else:
 				print(f"Discarding out-of-order frame with sequence_number: {frame.sequence_number}")
+    
 	def stop_receiver(self) -> None:
 		self.sock.close()
+		print("Se ha pausado el receiver")
 
 class ParSender():
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8009]] = ('localhost',8009)
@@ -66,6 +68,7 @@ class ParSender():
 		self.sock.sendto(pickle.dumps(end_frame), self.RECEIVER_ADDR)
 	def stop_sender(self)-> None:
 		self.sock.close()
+		print("Se ha pausado el sender")
 
 if __name__ == '__main__':
 	receiver: ParReceiver = ParReceiver()

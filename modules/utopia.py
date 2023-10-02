@@ -19,7 +19,7 @@ class UtopiaReceiver():
 	sock.bind(RECEIVER_ADDR)
 	def __init__(self) -> None:
 		self.running = True
-	def recreive(self) -> None:
+	def receiver(self) -> None:
 		print(f'Utopia Reciever', end='', flush=True)
 		while True:
 			received_packet, addr = self.sock.recvfrom(1024)
@@ -30,8 +30,8 @@ class UtopiaReceiver():
 			print('Content : ', frame.data)
 			print('------------------------------------------------------------------')
 	
-	def stop(self) -> None:
-		print('Receiver Stopped')
+	def stop_receiver(self) -> None:
+		print("Se ha pausado el receiver")
 		try:
 			self.sock.close()
 			self.running = False
@@ -68,8 +68,8 @@ class UtopiaSender():
 		file.close()
 		time.sleep(10)
 	
-	def stop(self) -> None:
-		print('Sender Stopped')
+	def stop_sender(self) -> None:
+		print("Se ha pausado el sender")
 		try:
 			self.sock.close()
 		except OSError:
@@ -78,17 +78,17 @@ class UtopiaSender():
 if __name__ == '__main__':
 	sender = UtopiaSender()
 	receiver = UtopiaReceiver()
-	receiver_thread = Thread(target=receiver.recreive)
+	receiver_thread = Thread(target=receiver.receiver)
 	receiver_thread.start()
 	sender_thread = Thread(target=sender.send, args=(0.5, 0.05, 3, 'Hello World'))
 	sender_thread.start()
 	sender_thread.join()
 	try:
-		sender.stop()
+		sender.stop_sender()
 	except Exception:
 		...
 	try:
-		receiver.stop()
+		receiver.stop_receiver()
 	except Exception:
 		...
 	receiver_thread.join()

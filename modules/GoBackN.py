@@ -63,7 +63,7 @@ class GoBackNReceiver():
 				packet.extend([rw,f1])
 				self.sock.sendto(pickle.dumps(packet),addr)
 	def stop_receiver(self)  -> None:
-		
+		print("Se ha pausado el receiver")
 		self.sock.close()
 
 class GoBackNSender():
@@ -167,9 +167,9 @@ class GoBackNSender():
 			ch: str = input('Send Again(y/n) : ')
 			if ch != 'y':				
 				break
-	def disable_network_layer(self) -> None:
-		print("Sender is disabled")
+	def stop_sender(self) -> None:
 		self.sock.close()
+		print("Se ha pausado el sender")
 
 if __name__ == '__main__':
 	sender = GoBackNSender()

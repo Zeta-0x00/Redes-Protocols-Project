@@ -38,7 +38,7 @@ def handler(signum, frame)-> None:
 signal.signal(signal.SIGINT, handler)
 
 class StopNWaitReceiver():
-	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8025]] = ('localhost', 8025)
+	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[9025]] = ('localhost', 9025)
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(RECEIVER_ADDR)
 	def receive(self) -> None:
@@ -69,12 +69,13 @@ class StopNWaitReceiver():
 					break
 	def stop_receiver(self) -> None:
 		self.sock.close()
+		print("Se ha pausado el receiver")
 
 
 class StopNWaitSender():
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8025]] = ('localhost', 8025)
-	SENDER_ADDR: tuple[Literal['localhost'], Literal[8000]] = ('localhost', 8000)
+	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[9025]] = ('localhost', 9025)
+	SENDER_ADDR: tuple[Literal['localhost'], Literal[9000]] = ('localhost', 9000)
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, number_of_frames, data):
@@ -93,7 +94,7 @@ class StopNWaitSender():
 				packet_ack = Packet(data=data)
 				rand_number: int = random.randint(a=1, b=4)
 				frame: Frame = Frame(packet=packet_ack)
-				self.sock.sendto(pickle.dumps(packet_ack), ('localhost', 8025))
+				self.sock.sendto(pickle.dumps(packet_ack), ('localhost', 9025))
 				send_timer.start()
 				match rand_number:
 					case 1:
@@ -141,6 +142,7 @@ class StopNWaitSender():
 
 	def stop_sender(self) -> None:
 		self.sock.close()
+		print("Se ha pausado el sender")
 
 
 if __name__ == '__main__':

@@ -71,6 +71,7 @@ class SRReceiver():
 				print("FATAL ERROR WITH THE FRAME")
 	def stop_receiver(self) -> None:
 		self.receiver_socket.close()
+		print("Se ha pausado el receiver")
 
 class SRSender():
 	socket_sender: socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -172,6 +173,7 @@ class SRSender():
 		lock.release()
 	def stop_sender(self) -> None:
 		self.socket_sender.close()
+		print("Se ha pausado el sender")
 
 if __name__ == '__main__':
 	data = "Hello There!"

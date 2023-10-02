@@ -6,8 +6,8 @@ import time
 import signal
 
 def halnder(signum, frame):
-    SWSender.stop_sw_sender()
-    SWReceiver.stop_sw_receiver()
+    SWSender.stop_sender()
+    SWReceiver.stop_receiver()
     print('Exiting...')
     exit(0)
 
@@ -58,9 +58,10 @@ class SWReceiver():
             sock.sendto(ack_data, addr)
         sock.close()
     @staticmethod
-    def stop_sw_receiver() -> None:
+    def stop_receiver() -> None:
         global receiver
         receiver = False
+        print("Se ha pausado el receiver")
 
 class SWSender():
     @staticmethod
@@ -80,9 +81,10 @@ class SWSender():
                     pass
         sock.close()
     @staticmethod
-    def stop_sw_sender() -> None:
+    def stop_sender() -> None:
         global sender
         sender = False
+        print("Se ha pausado el sender")
 
 if __name__ == '__main__':
     sender_ip = '127.0.0.1'
