@@ -1,11 +1,11 @@
 import socket
 import pickle
-from typing import Any, NoReturn, Literal
+from typing import Any, NoReturn
 import threading
 import time
 import signal
 
-def halnder(signum, frame):
+def halnder(signum, frame) -> NoReturn:
     SWSender.stop_sender()
     SWReceiver.stop_receiver()
     print('Exiting...')
