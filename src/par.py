@@ -60,11 +60,11 @@ class ParSender():
 	sock.bind(SENDER_ADDR)
 	def __init__(self):
 		...
-	def send_data(self,num_frames,data)-> None:
+	def send_data(self,number_frames,data)-> None:
 		"""
 			This method is used to send the frames.
-			:param num_frames: The number of frames to send.
-			:type num_frames: int
+			:param number_frames: The number of frames to send.
+			:type number_frames: int
 			:param data: The data to send.
 			:type data: str
 			:return: None
@@ -72,7 +72,7 @@ class ParSender():
 		"""
 		packet: Packet = Packet(data)
 		sequence_number: int = 0
-		for i in range(num_frames):
+		for i in range(number_frames):
 			frame: Frame = Frame(packet=packet)
 			frame.sequence_number = sequence_number
 			self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)

@@ -52,8 +52,8 @@ class Frame:
             :return: The ack packet.
             :rtype: Packet
         """
-        ack_num: Any = sequence_number + 1
-        return Packet(sequence_number=ack_num, data=b'')
+        ack_number: Any = sequence_number + 1
+        return Packet(sequence_number=ack_number, data=b'')
     def _deliver_packets(self) -> None:
         """
             This method is used to deliver the packets.
