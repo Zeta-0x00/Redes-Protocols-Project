@@ -45,7 +45,7 @@ class UtopiaSender():
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
 	frame_to_send = 0
-	tkinter_status = []
+
 	def __init__(self) -> None:
 		...
 	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data) -> None:
@@ -56,13 +56,11 @@ class UtopiaSender():
 		print(f'Utopia Sender', end='', flush=True)
 		while no_of_frames >= 0:
 			canSend = False
-			tkinter_status = [sequence_number, data]
 			while not canSend:
 				packet = Packet(data)
 				frame = Frame(packet)
 				self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)
 				canSend = True
-			pickle.dump(tkinter_status, file)
 			no_of_frames -= 1
 			sequence_number += 1
 		file.close()
