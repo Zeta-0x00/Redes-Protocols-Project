@@ -25,20 +25,20 @@ class ParReceiver():
 			:return: None
 		"""
 		print("Receiver started")
-		expected_seq_no = 0
+		expected_sequence_number = 0
 		while True:
 			frame_packet, addr = self.sock.recvfrom(1024)
 			frame = pickle.loads(frame_packet)
 			if frame.data == "":
 				break
-			if frame.sequence_number == expected_seq_no:
+			if frame.sequence_number == expected_sequence_number:
 				print(f"Received: {frame.data}")
 				ack = Frame(Packet(""))
 				ack.type = "ack"
-				ack.sequence_number = expected_seq_no
-				ack.confirmation_number = expected_seq_no
+				ack.sequence_number = expected_sequence_number
+				ack.confirmation_number = expected_sequence_number
 				self.sock.sendto(pickle.dumps(ack), ('localhost', 8001))
-				expected_seq_no = (expected_seq_no + 1) % 2
+				expected_sequence_number = (expected_sequence_number + 1) % 2
 			else:
 				print(f"Discarding out-of-order frame with sequence_number: {frame.sequence_number}")
     
