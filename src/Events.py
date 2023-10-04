@@ -9,7 +9,7 @@ class Event:
         self.type: Any = type
         self.data: Any | None = data
 
-    def __lt__(self, other):# -> Any:
+    def __lt__(self, other) -> Any:
         # The __lt__ method is used to compare events by time.        
         return self.time < other.time
 
@@ -28,7 +28,7 @@ class FrameArrivalEvent(Event):
         
 class CksumErrEvent(Event):
     # CksumErrEvent is an event that simulates the arrival of a frame with checksum error to the link layer.
-    def __init__(self, time, frame):
+    def __init__(self, time, frame) -> None:
         super().__init__(time=time, type="cksum_err", data=frame)
 
 class TimeoutEvent(Event):
