@@ -116,7 +116,7 @@ class StopNWaitSender():
 				match rand_number:
 					case 1:
 						print('Info : ', data)
-						print('Seq NO : ', sequence_number)
+						print('Sequence_Number : ', sequence_number)
 						print('Frame Lost')
 						print('Resending the frame')
 						lista.append('Frame Lost')
@@ -124,7 +124,7 @@ class StopNWaitSender():
 						print('===============================//=================================')
 					case 2:
 						print('Info : ', data)
-						print('Seq NO : ', sequence_number)
+						print('Sequence_Number : ', sequence_number)
 						print('TimeOut')
 						print('Resending the Frame')
 						lista.append('Timeout')
@@ -132,7 +132,7 @@ class StopNWaitSender():
 						print('===============================//=================================')
 					case 3:
 						print('Info : ', data)
-						print('Seq NO : ', sequence_number)
+						print('Sequence_Number : ', sequence_number)
 						acknowledgement, _ = self.sock.recvfrom(1024)
 						acknowledgement = str(acknowledgement, 'utf-8')
 						print(acknowledgement)
@@ -143,7 +143,7 @@ class StopNWaitSender():
 						acknowledgement, _ = self.sock.recvfrom(1024)
 						acknowledgement = str(acknowledgement, 'utf-8')
 						print('Info : ', data)
-						print('Seq NO : ', sequence_number)
+						print('Sequence_Number : ', sequence_number)
 						print('Acknowledgement No : ', acknowledgement, ' received')
 						send_timer.stop()
 						canSend = True

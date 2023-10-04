@@ -61,15 +61,15 @@ class UtopiaSender():
 	frame_to_send = 0
 	def __init__(self) -> None:
 		self.running = True
-	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, no_of_frames, data) -> None:
+	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, number_of_frames, data) -> None:
 		"""
 			This method is used to send the frames.
 			:param TIMEOUT_INTERVAL: The timeout interval.
 			:type TIMEOUT_INTERVAL: float
 			:param SLEEP_INTERVAL: The sleep interval.
 			:type SLEEP_INTERVAL: float
-			:param no_of_frames: The number of frames to send.
-			:type no_of_frames: int
+			:param number_of_frames: The number of frames to send.
+			:type number_of_frames: int
 			:param data: The data to send.
 			:type data: str
 			:return: None
@@ -80,7 +80,7 @@ class UtopiaSender():
 			file.seek(0)
 			file.truncate(0)
 			print(f'Utopia Sender', end='', flush=True)
-			while no_of_frames >= 0:
+			while number_of_frames >= 0:
 				if time.time() - s > TIMEOUT_INTERVAL:
 					print(f'Utopia Sender', end='', flush=True)
 					break
@@ -90,7 +90,7 @@ class UtopiaSender():
 					frame = Frame(packet=packet)
 					self.sock.sendto(pickle.dumps(frame), self.RECEIVER_ADDR)
 					canSend = True
-				no_of_frames -= 1
+				number_of_frames -= 1
 				sequence_number += 1
 				time.sleep(SLEEP_INTERVAL)
 	

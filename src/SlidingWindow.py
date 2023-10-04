@@ -28,7 +28,7 @@ class Frame:
     def __init__(self, window_size) -> None:
         self.window_size: Any = window_size
         self.window: list[None] = [None] * window_size
-        self.expected_seq_num = 0
+        self.expected_sequence_number = 0
         self.recv_base = 0
     def receive_packet(self, packet) -> Packet:
         """
@@ -38,10 +38,10 @@ class Frame:
             :return: The packet.
             :rtype: Packet
         """
-        if packet.sequence_number >= self.expected_seq_num and packet.sequence_number < self.expected_seq_num + self.window_size:
+        if packet.sequence_number >= self.expected_sequence_number and packet.sequence_number < self.expected_sequence_number + self.window_size:
             if self.window[packet.sequence_number % self.window_size] is None:
                 self.window[packet.sequence_number % self.window_size] = packet
-            if packet.sequence_number == self.expected_seq_num:
+            if packet.sequence_number == self.expected_sequence_number:
                 self._deliver_packets()
         return self._ack_packet(sequence_number=packet.sequence_number)
     def _ack_packet(self, sequence_number) -> Packet:
@@ -63,7 +63,7 @@ class Frame:
             packet: Any = d
             self.window[self.recv_base % self.window_size] = None
             self.recv_base += 1
-            self.expected_seq_num += 1
+            self.expected_sequence_number += 1
             self._process_data(packet=packet)
     def _process_data(self, packet) -> None:        
         print(packet.data.decode('utf-8'))
