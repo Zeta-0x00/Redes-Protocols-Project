@@ -11,12 +11,19 @@ def handler(signum, frame)-> None:
 signal.signal(signal.SIGINT, handler)
 
 class ParReceiver():
+	"""
+		This class is used to receive the frames.
+	"""
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8009]] = ('localhost', 8009)
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(RECEIVER_ADDR)
 	def __init__(self):
 		...
 	def receive_data(self) -> None:
+		"""
+			This method is used to receive the frames.
+			:return: None
+		"""
 		print("Receiver started")
 		expected_seq_no = 0
 		while True:
@@ -36,10 +43,17 @@ class ParReceiver():
 				print(f"Discarding out-of-order frame with sequence_number: {frame.sequence_number}")
     
 	def stop_receiver(self) -> None:
+		"""
+			This method is used to stop the receiver.
+			:return: None
+		"""
 		self.sock.close()
-		print("Se ha pausado el receiver")
+		print("receiver has been paused")
 
 class ParSender():
+	"""
+		This class is used to send the frames.
+	"""
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8009]] = ('localhost',8009)
 	SENDER_ADDR: tuple[Literal['localhost'], Literal[8001]] = ('localhost', 8001)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,6 +61,15 @@ class ParSender():
 	def __init__(self):
 		...
 	def send_data(self,num_frames,data)-> None:
+		"""
+			This method is used to send the frames.
+			:param num_frames: The number of frames to send.
+			:type num_frames: int
+			:param data: The data to send.
+			:type data: str
+			:return: None
+			:rtype: None
+		"""
 		packet: Packet = Packet(data)
 		sequence_number: int = 0
 		for i in range(num_frames):
@@ -67,8 +90,13 @@ class ParSender():
 		end_frame.sequence_number = sequence_number
 		self.sock.sendto(pickle.dumps(end_frame), self.RECEIVER_ADDR)
 	def stop_sender(self)-> None:
+		"""
+			This method is used to stop the sender.
+			:return: None
+			:rtype: None
+		"""
 		self.sock.close()
-		print("Se ha pausado el sender")
+		print("sender has been paused")
 
 if __name__ == '__main__':
 	receiver: ParReceiver = ParReceiver()

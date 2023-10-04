@@ -15,6 +15,9 @@ signal.signal(signal.SIGINT, handler)
 
 
 class GoBackNReceiver():
+	"""
+		This class is used to receive the frames.
+	"""
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8025]] = ('localhost', 8025)
 	SENDER_ADDR: tuple[Literal['localhost'], Literal[8000]] = ('localhost', 8000)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -22,6 +25,10 @@ class GoBackNReceiver():
 	def __init__(self) -> None:
 		...
 	def receiver(self)  -> NoReturn:
+		"""
+			This method is used to receive the frames.
+			:return: None
+		"""
 		print(f'GoBackN Receiver', end = '', flush = True)
 		while True:
 			
@@ -40,7 +47,7 @@ class GoBackNReceiver():
 					if rw == int(arr1[i]) :
 						
 						print("Frame ",arr1[i]," is received correctly.")
-						print("--------------------------------------------------------------------------------")
+						print("===============================//=================================")
 						rw = (rw+1)%m
 					else:
 						
@@ -55,23 +62,33 @@ class GoBackNReceiver():
 						
 						print("Frame ",arr1[i]," is received correctly.")
 						rw: int = (rw + 1)%m
-						print("--------------------------------------------------------------------------------")
+						print("===============================//=================================")
 					else :
 						
 						print("Duplicate Frame ",arr1[i]," is discarded.")
-						print("--------------------------------------------------------------------------------")
+						print("===============================//=================================")
 				packet.extend([rw,f1])
 				self.sock.sendto(pickle.dumps(packet),addr)
 	def stop_receiver(self)  -> None:
+		"""
+			This method is used to stop the receiver.
+		"""
 		print("Se ha pausado el receiver")
 		self.sock.close()
 
 class GoBackNSender():
+	"""
+		This class is used to send the frames.
+	"""
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[8025]] = ('localhost', 8025)
 	SENDER_ADDR: tuple[Literal['localhost'], Literal[8000]] = ('localhost', 8000)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
 	def sender(self) -> None:
+		"""
+			This method is used to send the frames.
+			:return: None
+		"""
 		total_frames = 16
 		window_size = 3
 		total_number_of_frames: int = pow(2, window_size)
@@ -96,8 +113,11 @@ class GoBackNSender():
 		file.close()
 		time.sleep(2)
 	def senderLoop(self, array_to_store, ch, file, frame_send_at_instance, receive_window, send_window, size_of_the_array,
-				total_frames, total_number_of_frames):
-		# This while loop is used to send the frames to the receiver with size of the array.
+				total_frames, total_number_of_frames) -> None:
+		"""
+			This method is used to send the frames.
+			:return: None
+		"""
 		while ch == 'y' and size_of_the_array < total_frames:
 			array_to_store_the_frames_to_be_sent: list = []
 			packet: list = []
@@ -110,7 +130,7 @@ class GoBackNSender():
 			for i in range(j):
 				
 				print("Frame  ", array_to_store_the_frames_to_be_sent[i], " is sent")
-			print("--------------------------------------------------------------------------------")
+			print("===============================//=================================")
 			random_initial: int = random.randint(a=0, b=9)
 			random_frame_instance: int = random.randint(0, frame_send_at_instance - 1)
 			packet.extend(
@@ -126,11 +146,11 @@ class GoBackNSender():
 					for k in range(len(array_to_store)):
 						if array_to_store_the_frames_to_be_sent[k] != array_to_store_the_frames_to_be_sent[a1]:
 							print("Acknowledgement of Frame", array_to_store_the_frames_to_be_sent[k], " is recieved")
-							print("--------------------------------------------------------------------------------")
+							print("===============================//=================================")
 						else:
 							break
 					print("Acknowledgement of Frame ", array_to_store_the_frames_to_be_sent[a1], " is lost")
-					print("--------------------------------------------------------------------------------")
+					print("===============================//=================================")
 					temp = (send_window + frame_send_at_instance) % total_number_of_frames
 					comp: int = 0
 					if (temp == 0):
@@ -145,7 +165,8 @@ class GoBackNSender():
 				else:
 					send_window = (send_window + frame_send_at_instance) % total_number_of_frames
 					print("All Four Frames are Acknowledged")
-					print("--------------------------------------------------------------------------------")
+					print("========================================//======================================")
+						   
 					size_of_the_array += 4
 			else:				
 				ack, _ = self.sock.recvfrom(1024)
@@ -155,19 +176,23 @@ class GoBackNSender():
 				ld: int = random.randint(a=0, b=1)
 				if ld == 0:
 					print("Frame ", array_to_store_the_frames_to_be_sent[random_frame_instance], " is damaged.")
-					print("--------------------------------------------------------------------------------")
+					print("===============================//=================================")
 				else:
 					print("Frame ", array_to_store_the_frames_to_be_sent[random_frame_instance], " is lost")
-					print("--------------------------------------------------------------------------------")
+					print("===============================//=================================")
 				for i in range(random_frame_instance + 1, frame_send_at_instance):
 					print("Frame ", array_to_store_the_frames_to_be_sent[i], " is discarded")
-				print("-------------TIMEOUT-------------")
+				print("//===============//TIMEOUT//===============//")
 				send_window = array_to_store_the_frames_to_be_sent[random_frame_instance]
 			pickle.dump(packet, file)
 			ch: str = input('Send Again(y/n) : ')
 			if ch != 'y':				
 				break
 	def stop_sender(self) -> None:
+		"""
+			This method is used to stop the sender.
+			:return: None
+		"""
 		self.sock.close()
 		print("Se ha pausado el sender")
 

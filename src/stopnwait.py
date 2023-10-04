@@ -38,10 +38,17 @@ def handler(signum, frame)-> None:
 signal.signal(signal.SIGINT, handler)
 
 class StopNWaitReceiver():
+	"""
+		This class is used to receive the frames.
+	"""
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[9025]] = ('localhost', 9025)
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(RECEIVER_ADDR)
 	def receive(self) -> None:
+		"""
+			This method is used to receive the frames.
+			:return: None
+		"""
 		print(f'StopNWait Reciever', end='', flush=True)
 		while True:
 			packet_connect_address, addr = self.sock.recvfrom(1024)
@@ -56,29 +63,39 @@ class StopNWaitReceiver():
 					packet_connect_address = (int(frame.sequence_number) + 1) % 2
 					print('Acknowlegment ', packet_connect_address, ' sent')
 					self.sock.sendto(bytes(str(object=packet_connect_address), encoding='utf-8'), ('localhost', 8000))
-					print('------------------------------------------------------------------')
+					print('===============================//=================================')
 				case 3:
 					print('Frame Received with sequence_number: ', frame.sequence_number)
 					packet_connect_address = 'Acknowledgement Lost'
 					self.sock.sendto(bytes(str(object=packet_connect_address), encoding='utf-8'), ('localhost', 8000))
-					print('------------------------------------------------------------------')
+					print('===============================//=================================')
 				case 1 | 2:
 					print('No Frame Received')
-					print('------------------------------------------------------------------')
+					print('===============================//=================================')
 				case _:
 					break
 	def stop_receiver(self) -> None:
+		"""
+			This method is used to stop the receiver.
+			:return: None
+		"""
 		self.sock.close()
 		print("Se ha pausado el receiver")
 
 
 class StopNWaitSender():
+	"""
+		This class is used to send the frames.
+	"""
 	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	RECEIVER_ADDR: tuple[Literal['localhost'], Literal[9025]] = ('localhost', 9025)
 	SENDER_ADDR: tuple[Literal['localhost'], Literal[9000]] = ('localhost', 9000)
-	sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	sock.bind(SENDER_ADDR)
-	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, number_of_frames, data):
+	def send(self, TIMEOUT_INTERVAL, SLEEP_INTERVAL, number_of_frames, data) -> None:
+		"""
+			This method is used to send the frames.
+			:return: None
+		"""
 		send_timer = Timer(duration=TIMEOUT_INTERVAL)
 		frame_to_send: int = 0
 		sequence_number = 0
@@ -104,7 +121,7 @@ class StopNWaitSender():
 						print('Resending the frame')
 						lista.append('Frame Lost')
 						send_timer.stop()
-						print('------------------------------------------------------------------')
+						print('===============================//=================================')
 					case 2:
 						print('Info : ', data)
 						print('Seq NO : ', sequence_number)
@@ -112,7 +129,7 @@ class StopNWaitSender():
 						print('Resending the Frame')
 						lista.append('Timeout')
 						send_timer.stop()
-						print('------------------------------------------------------------------')
+						print('===============================//=================================')
 					case 3:
 						print('Info : ', data)
 						print('Seq NO : ', sequence_number)
@@ -121,7 +138,7 @@ class StopNWaitSender():
 						print(acknowledgement)
 						send_timer.stop()
 						lista.append('Acknowledgement Lost')
-						print('------------------------------------------------------------------')
+						print('===============================//=================================')
 					case 4:
 						acknowledgement, _ = self.sock.recvfrom(1024)
 						acknowledgement = str(acknowledgement, 'utf-8')
@@ -132,15 +149,20 @@ class StopNWaitSender():
 						canSend = True
 						sequence_number = (sequence_number + 1) % 2
 						lista.append('Acknowledgement Received')
-						print('------------------------------------------------------------------')
+						print('===============================//=================================')
 					case _:
 						...
+				time.sleep(SLEEP_INTERVAL)
 			pickle.dump(lista, file)
 			number_of_frames -= 1
 		file.close()
 		time.sleep(10)
 
 	def stop_sender(self) -> None:
+		"""
+			This method is used to stop the sender.
+			:return: None
+		"""
 		self.sock.close()
 		print("Se ha pausado el sender")
 

@@ -32,12 +32,22 @@ class Frame:
 
 
 class SRReceiver():
+	"""
+		This class is used to receive the frames.	
+	"""
 	receiver_socket: socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	host: str = socket.gethostname()
 	portA: int = 8004
 	portB: int = 8006
 	receiver_socket.bind(('', portB))
 	def receiver(self, window_size=7) -> Any:
+		"""
+			This method is used to receive the frames.
+			:param window_size: The window size.
+			:type window_size: int
+			:return: None
+			:rtype: None
+		"""
 		total_size = 8192
 		frame_size = 0
 		frame_list: list = []
@@ -70,15 +80,36 @@ class SRReceiver():
 			except Exception as e:
 				print("FATAL ERROR WITH THE FRAME")
 	def stop_receiver(self) -> None:
+		"""
+			This method is used to stop the receiver.
+			:return: None
+			:rtype: None
+		"""
 		self.receiver_socket.close()
-		print("Se ha pausado el receiver")
+		print("receiver has been paused")
 
 class SRSender():
+	"""
+		This class is used to send the frames.
+	"""
 	socket_sender: socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	host: str = socket.gethostname()
 	portA: int = 8004
 	portB: int = 8006
-	def shipping_confirmation(self, size_buffer, lock, frames_without_confirmation, actual_ack_seq_num):
+	def shipping_confirmation(self, size_buffer, lock, frames_without_confirmation, actual_ack_seq_num) -> NoReturn:
+		"""
+			This method is used to confirm the frames.
+			:param size_buffer: The size of the buffer.
+			:type size_buffer: int
+			:param lock: The lock.
+			:type lock: threading.Lock
+			:param frames_without_confirmation: The frames without confirmation.
+			:type frames_without_confirmation: list
+			:param actual_ack_seq_num: The actual ack sequence number.
+			:type actual_ack_seq_num: int
+			:return: None
+			:rtype: None
+		"""
 		self.socket_sender.bind(('', self.portA))
 		while True:
 			try:
@@ -92,14 +123,36 @@ class SRSender():
 			except Exception as e:
 				print("Error: ", e)
 	def next_frame(self, frames_window, counter_window) -> Any:
+		"""
+			This method is used to get the next frame.
+			:param frames_window: The frames window.
+			:type frames_window: list
+			:param counter_window: The counter window.
+		"""
 		next_frame_to_send = frames_window[counter_window]
 		counter_window += 1
 		return next_frame_to_send
 	def sender_window(self, packet, frame_type, frames_window, actual_seq_num) -> None:
+		"""
+			This method is used to send the frames.
+			:param packet: The packet.
+			:type packet: Packet
+			:param frame_type: The frame type.
+			:type frame_type: list
+			:param frames_window: The frames window.
+		"""
 		frame_to_send = Frame(random.choice(frame_type), actual_seq_num, -1, packet)
 		frames_window.append(frame_to_send)
 		actual_seq_num += 1
 	def sender(self, window_size, packet) -> None:
+		"""
+			This method is used to send the frames.
+			:param window_size: The window size.
+			:type window_size: int
+			:param packet: The packet.
+			:type packet: Packet
+			:return: None
+		"""
 		counter_window = 0
 		size_buffer = 1024
 		frames_without_confirmation: list = []
@@ -154,6 +207,14 @@ class SRSender():
 					counter_window = 0
 					network_layer_flag = True
 	def retry_send(self, frameToSend, frames_without_confirmation, lock, frame_type, attempts) -> None:
+		"""
+			This method is used to retry the send.
+			:param frameToSend: The frame to send.
+			:type frameToSend: Frame
+			:param frames_without_confirmation: The frames without confirmation.
+			:type frames_without_confirmation: list
+			:param lock: The lock.
+		"""
 		lock.acquire()
 		if frameToSend.sequenceNumber not in frames_without_confirmation:
 			lock.release()
@@ -172,8 +233,13 @@ class SRSender():
 		timer.start()
 		lock.release()
 	def stop_sender(self) -> None:
+		"""
+			This method is used to stop the sender.
+			:return: None
+			:rtype: None
+		"""
 		self.socket_sender.close()
-		print("Se ha pausado el sender")
+		print("Sender has been paused_")
 
 if __name__ == '__main__':
 	data = "Hello There!"
